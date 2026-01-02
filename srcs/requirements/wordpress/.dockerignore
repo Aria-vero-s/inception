@@ -1,0 +1,24 @@
+# VCS
+.git
+.gitignore
+
+# Local env / secrets
+.env
+secrets
+../secrets
+../../secrets
+
+# Host data (don't include host-mounted site files in the build)
+/var/www/html
+/home/*/data
+
+# Build artifacts / dependencies
+node_modules
+vendor
+*.log
+*.tmp
+
+# Editors / OS
+.DS_Store
+Thumbs.db
+*.swp

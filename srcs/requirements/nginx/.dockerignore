@@ -1,0 +1,10 @@
+.git
+.gitignore
+.env
+secrets
+../secrets
+srcs/requirements/nginx/ssl/*
+*.pem
+*.key
+*.crt
+.DS_Store

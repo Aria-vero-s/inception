@@ -1,0 +1,15 @@
+# secrets & sensitive files
+/secrets/
+/srcs/requirements/nginx/ssl/
+/home/*/data
+
+# node / python / OS artifacts
+node_modules/
+*.pyc
+__pycache__/
+.DS_Store
+Thumbs.db
+
+# Docker artifacts you don't want in git
+docker-compose.override.yml
+.env

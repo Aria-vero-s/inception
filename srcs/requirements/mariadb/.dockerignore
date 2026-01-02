@@ -1,0 +1,10 @@
+.git
+.gitignore
+.env
+secrets
+../secrets
+*.sql
+*.sql.gz
+*.log
+*.tmp
+.DS_Store
