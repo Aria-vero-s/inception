@@ -48,7 +48,7 @@ if ! wp core is-installed --path=/var/www/html --allow-root 2>/dev/null; then
         --path=/var/www/html \
         "${WP_USER}" "${WP_USER_EMAIL}" \
         --role=subscriber \
-        --user_pass="$(cat /run/secrets/wp_admin_password 2>/dev/null || echo 'changeme')" \
+        --user_pass="$(cat /run/secrets/wp_user_password 2>/dev/null || echo 'changeme')" \
         --allow-root || true
 fi
 
