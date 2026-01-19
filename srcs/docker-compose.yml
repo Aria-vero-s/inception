@@ -9,7 +9,7 @@ services:
       - MYSQL_USER=${MYSQL_USER}
       - MYSQL_PASSWORD_FILE=/run/secrets/db_password
     volumes:
-      - ${HOST_DATA_DIR}/mysql:/var/lib/mysql
+      - mariadb_data:/var/lib/mysql
     networks:
       - inception_network
     secrets:
@@ -27,9 +27,13 @@ services:
       - WORDPRESS_DB_HOST=mariadb
       - WORDPRESS_DB_NAME=${MYSQL_DATABASE}
       - WORDPRESS_DB_USER=${MYSQL_USER}
-      - WORDPRESS_DB_PASSWORD_FILE=/run/secrets/db_password
+      - WP_ADMIN_USER=${WP_ADMIN_USER}
+      - WP_ADMIN_EMAIL=${WP_ADMIN_EMAIL}
+      - WP_TITLE=${WP_TITLE}
+      - WP_USER=${WP_USER}
+      - WP_USER_EMAIL=${WP_USER_EMAIL}
     volumes:
-      - ${HOST_DATA_DIR}/wordpress:/var/www/html
+      - wordpress_data:/var/www/html
     networks:
       - inception_network
     secrets:
@@ -48,15 +52,27 @@ services:
     ports:
       - "443:443"
     volumes:
-      - ${HOST_DATA_DIR}/wordpress:/var/www/html:ro
-      - ./requirements/nginx/conf/default.conf:/etc/nginx/conf.d/default.conf:ro
-      - ./requirements/nginx/ssl:/etc/nginx/ssl:ro
+      - wordpress_data:/var/www/html:ro
     networks:
       - inception_network
 
 networks:
   inception_network:
     driver: bridge
+
+volumes:
+  mariadb_data:
+    driver: local
+    driver_opts:
+      type: none
+      o: bind
+      device: ${HOST_DATA_DIR}/mysql
+  wordpress_data:
+    driver: local
+    driver_opts:
+      type: none
+      o: bind
+      device: ${HOST_DATA_DIR}/wordpress
 
 secrets:
   db_root_password:

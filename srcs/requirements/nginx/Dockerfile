@@ -1,25 +1,29 @@
-FROM debian:stable-slim
+FROM debian:bookworm-slim
 
 ARG DOMAIN_NAME=asaulnie.42.fr
 
 RUN apt-get update && apt-get install -y --no-install-recommends \
-nginx \
-openssl \
-&& rm -rf /var/lib/apt/lists/*
-
+    nginx \
+    openssl \
+    && rm -rf /var/lib/apt/lists/*
 
 # Remove default site
 RUN rm -f /etc/nginx/sites-enabled/default || true
 
+# Create SSL directory and generate self-signed certificate
+RUN mkdir -p /etc/nginx/ssl && \
+    openssl req -x509 -nodes -days 365 -newkey rsa:2048 \
+    -keyout /etc/nginx/ssl/server.key \
+    -out /etc/nginx/ssl/server.crt \
+    -subj "/C=FR/ST=IDF/L=Paris/O=42/CN=${DOMAIN_NAME}" && \
+    chmod 600 /etc/nginx/ssl/server.key
 
-COPY conf/default.conf /etc/nginx/conf.d/default.conf
+COPY conf/default.conf /etc/nginx/conf.d/default.conf.template
 
-# Generate SSL certificate
-COPY tools/generate-self-signed.sh /tmp/generate-self-signed.sh
-RUN chmod +x /tmp/generate-self-signed.sh && DOMAIN_NAME=${DOMAIN_NAME} /tmp/generate-self-signed.sh
+# Substitute DOMAIN_NAME in nginx config
+RUN sed -i "s/DOMAIN_NAME_PLACEHOLDER/${DOMAIN_NAME}/g" /etc/nginx/conf.d/default.conf.template \
+    && mv /etc/nginx/conf.d/default.conf.template /etc/nginx/conf.d/default.conf
 
-# Expose only 443
 EXPOSE 443
-
 
 CMD ["nginx", "-g", "daemon off;"]

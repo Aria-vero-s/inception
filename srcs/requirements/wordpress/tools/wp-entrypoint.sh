@@ -4,7 +4,7 @@ set -e
 # If WordPress isn't installed in the volume, extract it
 if [ ! -f /var/www/html/index.php ]; then
     echo "Installing WordPress to volume..."
-    wget -q https://wordpress.org/latest.tar.gz -O /tmp/wordpress.tar.gz
+    wget -q https://wordpress.org/wordpress-6.4.2.tar.gz -O /tmp/wordpress.tar.gz
     tar -xzf /tmp/wordpress.tar.gz -C /tmp
     cp -r /tmp/wordpress/* /var/www/html/
     rm -rf /tmp/wordpress /tmp/wordpress.tar.gz
@@ -38,19 +38,19 @@ if ! wp core is-installed --path=/var/www/html --allow-root 2>/dev/null; then
     wp core install \
         --path=/var/www/html \
         --url="https://${DOMAIN_NAME}" \
-        --title="WordPress" \
-        --admin_user="wpuser" \
-        --admin_email="wpuser@${DOMAIN_NAME}" \
-        --admin_password="$(cat /run/secrets/wp_admin_password 2>/dev/null || echo 'password')" \
+        --title="${WP_TITLE:-Inception}" \
+        --admin_user="${WP_ADMIN_USER}" \
+        --admin_email="${WP_ADMIN_EMAIL}" \
+        --admin_password="$(cat /run/secrets/wp_admin_password 2>/dev/null || echo 'changeme')" \
         --allow-root
     
     wp user create \
         --path=/var/www/html \
-        johndoe johndoe@${DOMAIN_NAME} \
+        "${WP_USER}" "${WP_USER_EMAIL}" \
         --role=subscriber \
-        --user_pass="$(cat /run/secrets/wp_admin_password 2>/dev/null || echo 'password')" \
+        --user_pass="$(cat /run/secrets/wp_admin_password 2>/dev/null || echo 'changeme')" \
         --allow-root || true
 fi
 
 # Start PHP-FPM in foreground (PID 1)
-exec php-fpm8.4 -F
+exec php-fpm8.2 -F

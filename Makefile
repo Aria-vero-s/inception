@@ -1,7 +1,12 @@
 SHELL := /bin/bash
 COMPOSE_FILE := srcs/docker-compose.yml
+DATA_DIR := /home/asaulnie/data
 
-all: build up
+all: volumes build up
+
+volumes:
+	mkdir -p $(DATA_DIR)/mysql
+	mkdir -p $(DATA_DIR)/wordpress
 
 build:
 	docker compose -f $(COMPOSE_FILE) build --no-cache
@@ -21,6 +26,14 @@ down:
 	docker compose -f $(COMPOSE_FILE) down --volumes --remove-orphans
 
 clean: down
-	rm -rf srcs/requirements/nginx/ssl || true
 
-.PHONY: all build up start stop restart down clean
+fclean: clean
+	rm -rf $(DATA_DIR)/mysql || true
+	rm -rf $(DATA_DIR)/wordpress || true
+	docker stop $$(docker ps -qa) 2>/dev/null || true
+	docker rm $$(docker ps -qa) 2>/dev/null || true
+	docker rmi -f $$(docker images -qa) 2>/dev/null || true
+	docker volume rm $$(docker volume ls -q) 2>/dev/null || true
+	docker network rm $$(docker network ls -q) 2>/dev/null || true
+
+.PHONY: all volumes build up start stop restart down clean fclean
