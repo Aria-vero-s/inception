@@ -35,20 +35,22 @@ done
 
 # Check if WordPress is already installed and set it up if needed
 if ! wp core is-installed --path=/var/www/html --allow-root 2>/dev/null; then
+    WP_ADMIN_PASS=$(cat /run/secrets/wp_admin_password 2>/dev/null || echo 'changeme')
+    WP_USER_PASS=$(cat /run/secrets/wp_user_password 2>/dev/null || echo 'changeme')
+    
     wp core install \
         --path=/var/www/html \
         --url="https://${DOMAIN_NAME}" \
         --title="${WP_TITLE:-Inception}" \
         --admin_user="${WP_ADMIN_USER}" \
         --admin_email="${WP_ADMIN_EMAIL}" \
-        --admin_password="$(cat /run/secrets/wp_admin_password 2>/dev/null || echo 'changeme')" \
+        --admin_password="${WP_ADMIN_PASS}" \
         --allow-root
     
-    wp user create \
+    wp user create "${WP_USER}" "${WP_USER_EMAIL}" \
         --path=/var/www/html \
-        "${WP_USER}" "${WP_USER_EMAIL}" \
         --role=subscriber \
-        --user_pass="$(cat /run/secrets/wp_user_password 2>/dev/null || echo 'changeme')" \
+        --user_pass="${WP_USER_PASS}" \
         --allow-root || true
 fi
 
