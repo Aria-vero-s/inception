@@ -1,0 +1,25 @@
+# Secrets - never commit these!
+secrets/
+
+# Environment file (optional - some keep this, but it can contain sensitive info)
+srcs/.env
+
+# Data volumes
+/home/asaulnie/data/
+
+# SSL certificates (generated locally)
+srcs/requirements/nginx/ssl/
+
+# OS/Editor files
+.DS_Store
+*.swp
+*.swo
+*~
+.vscode/
+.idea/
+
+
+EVAL_GUIDE.md
+eval.txt
+README.md
+subject.txt
