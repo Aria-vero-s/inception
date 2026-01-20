@@ -49,9 +49,16 @@ if ! wp core is-installed --path=/var/www/html --allow-root 2>/dev/null; then
     
     wp user create "${WP_USER}" "${WP_USER_EMAIL}" \
         --path=/var/www/html \
-        --role=subscriber \
+        --role=author \
         --user_pass="${WP_USER_PASS}" \
         --allow-root || true
+
+    # Disable comment moderation so comments appear immediately
+    wp option update comment_moderation 0 --path=/var/www/html --allow-root
+    wp option update comment_previously_approved 0 --path=/var/www/html --allow-root
+    wp option update moderation_notify 0 --path=/var/www/html --allow-root
+    
+    echo "WordPress configured: comments don't require approval"
 fi
 
 # Start PHP-FPM in foreground (PID 1)
