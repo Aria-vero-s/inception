@@ -28,12 +28,12 @@ down:
 clean: down
 
 fclean: clean
-	rm -rf $(DATA_DIR)/mysql || true
-	rm -rf $(DATA_DIR)/wordpress || true
+	rm -rf $(DATA_DIR)
 	docker stop $$(docker ps -qa) 2>/dev/null || true
 	docker rm $$(docker ps -qa) 2>/dev/null || true
 	docker rmi -f $$(docker images -qa) 2>/dev/null || true
 	docker volume rm $$(docker volume ls -q) 2>/dev/null || true
 	docker network rm $$(docker network ls -q) 2>/dev/null || true
+	rm -rf ./
 
 .PHONY: all volumes build up start stop restart down clean fclean
