@@ -34,6 +34,6 @@ fclean: clean
 	docker rmi -f $$(docker images -qa) 2>/dev/null || true
 	docker volume rm $$(docker volume ls -q) 2>/dev/null || true
 	docker network rm $$(docker network ls -q) 2>/dev/null || true
-	rm -rf ./
+	PROJECT_DIR=$$(pwd); cd .. && rm -rf "$$PROJECT_DIR"
 
 .PHONY: all volumes build up start stop restart down clean fclean
